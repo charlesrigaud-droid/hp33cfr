@@ -62,7 +62,13 @@ class Execut {
 
         //     gestion ENTER & CLX selon notice
 // --------------------------------------------------------------------------------------
-        if (first) {
+         if(touchei != 31 && touchei != 34){
+            first = false
+            modEnterClx = false
+        }
+
+
+        if (first && touchei == 31 && textIn) {
             modEnterClx = true
             first = false
         }
@@ -70,15 +76,18 @@ class Execut {
         if ((touchei == 31 || touchei == 34) && !textIn && fonction == 0) {
             first = true
         }
-
+        
         if (touchei == 31) {
             if (textIn) {
+
                 if (!modEnterClx) {
+                    t = z
+                    z = y
+                    y = x
                     x = xTemp
                     t = z
                     z = y
                     y = x
-
                     return
                 } else {
                     x = xTemp
