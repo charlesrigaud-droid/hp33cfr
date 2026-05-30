@@ -91,6 +91,9 @@ class Execut {
         // --------------------------------------------------------------------------------------
  // la saisie devient x sans ENTER
         if (textIn) {
+            t = z
+            z = y
+            y = x
             x = xTemp
         }
 
