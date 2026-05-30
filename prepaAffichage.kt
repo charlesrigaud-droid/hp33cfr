@@ -1,6 +1,9 @@
 package com.example.hp33cfr
 
 
+import java.math.BigDecimal
+import java.math.MathContext
+import java.math.RoundingMode
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -18,6 +21,7 @@ fun mantisse() {
 
 
 fun affSmart(): String {
+    calcul.x = calcul.x.roundTo15Digits()
 
     val s = "%${11}e".format(Locale.US, calcul.x) // Formate large
     //  Log.d("exp", "  $s")
@@ -82,4 +86,14 @@ fun formatEngineer(value: Double): String {
     var formattedMantissa = String.format(Locale.US,  "%.${fix}f", engMantissa)
     formattedMantissa = formattedMantissa.take(7)
     return "$formattedMantissa E$signStr$formattedExponent"
+}
+
+fun Double.roundTo15Digits(): Double {
+    // 1. Si le nombre est extrêmement petit (ex: inférieur à 1e-13 en valeur absolue), on retourne 0
+    if (abs(this) < 1e-13) {
+        return 0.0
+    }
+    // 2. Arrondi à 15 chiffres significatifs (gère aussi les nombres négatifs)
+    val mc = MathContext(15, RoundingMode.HALF_UP)
+    return BigDecimal(this).round(mc).toDouble()
 }
