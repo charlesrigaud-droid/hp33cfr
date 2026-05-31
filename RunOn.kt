@@ -11,7 +11,7 @@ class RunViewModel : ViewModel() {
     val codes = prog.codes
 
     private var cfrjob: Job? = null
-    var  timeexc = 60L
+    var  timeexc = 6L
 
     fun running() {
         cfrjob?.cancel()
@@ -20,7 +20,7 @@ class RunViewModel : ViewModel() {
             while (calcul.runOnOff) {
                 runCode()
                 delay(timeexc)
-                if (timeexc > 60L){timeexc = 60L}
+                if (timeexc > 6L){timeexc = 6L}
             }
         }
     }
