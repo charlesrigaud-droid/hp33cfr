@@ -648,30 +648,30 @@ class Execut {
                 x = x.pow(2)
             }
 
-
-            1 -> {
-                if (x in 0.0..709.0) {
+             1 -> {
+                if (x in -709.0..709.0) {
                     lastX = x
                     x = exp(x)
                 } else {
                     fonction = 0
-                    message = if (x >= 709.0) "out of bounds" else "x < 0"
+                    message = if (abs(x)>= 709.0) "out of bounds" else "x < 0"
                     flashMessage(400)
                 }
 
             }
 
             2 -> {
-                if (x in 0.0..308.0) {
+                if (x in -308.0..308.0) {
                     lastX = x
                     x = 10.0.pow(x)
                 } else {
                     fonction = 0
-                    message = if (x >= 308.0) "out of bounds" else "x < 0"
+                    message = if (abs(x) >= 308.0) "out of bounds" else "x < 0"
                     flashMessage(400)
                 }
 
             }
+           
 
             3 -> { // 1/x
                 if (x != 0.0) {
