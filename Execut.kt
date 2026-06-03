@@ -654,7 +654,7 @@ class Execut {
                     x = exp(x)
                 } else {
                     fonction = 0
-                    message = if (abs(x)>= 709.0) "out of bounds" else "x < 0"
+                    message =  "out of bounds"
                     flashMessage(400)
                 }
 
@@ -666,7 +666,7 @@ class Execut {
                     x = 10.0.pow(x)
                 } else {
                     fonction = 0
-                    message = if (abs(x) >= 308.0) "out of bounds" else "x < 0"
+                    message =  "out of bounds"
                     flashMessage(400)
                 }
 
