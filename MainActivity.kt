@@ -93,7 +93,7 @@ fun Aff() {
     val infotext = buildAnnotatedString {
         append("HP33_CFR ")
         withStyle(style = SpanStyle(color = Color.Magenta, fontSize = 16.sp)) {
-            append("V 2.1")
+            append("V 2.3")
         }
     }
 
