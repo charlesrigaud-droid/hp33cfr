@@ -5,13 +5,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.truncate
 
 class RunViewModel : ViewModel() {
 
     val codes = prog.codes
 
     private var cfrjob: Job? = null
-    var  timeexc = 6L
+    var timeexc = 6L
 
     fun running() {
         cfrjob?.cancel()
@@ -20,7 +21,9 @@ class RunViewModel : ViewModel() {
             while (calcul.runOnOff) {
                 runCode()
                 delay(timeexc)
-                if (timeexc > 6L){timeexc = 6L}
+                if (timeexc > 6L) {
+                    timeexc = 6L
+                }
             }
         }
     }
@@ -33,18 +36,26 @@ class RunViewModel : ViewModel() {
             return
         }
 
-
         rpm(code[0])
+
         if (code[0] in listOf(12, 13)) {
-           return
+            return
+        }
+        if (code[0] == 33) {
+
+            rpm(code[1])
+            rpm(code[2] / 10)
+            rpm(code[2] % 10)
+            index += 1
+            return
         }
 
-            if (longpas >= 2) {
-                rpm(code[1])
-            }
-            if (longpas >= 3) {
-                rpm(code[2])
-            }
+        if (longpas >= 2) {
+            rpm(code[1])
+        }
+        if (longpas >= 3) {
+            rpm(code[2])
+        }
 
         index += 1
 
