@@ -17,7 +17,7 @@ class Prgm {
     }
 
     private var info2nd = false
-
+    private var sgn =  false
     private var previous = 99
     private var fonction = 0
 
@@ -69,7 +69,39 @@ class Prgm {
             4 -> prgRCL(touchei)
             5 -> prgGSB(touchei)
             6 -> prgGTO(touchei)
+            8 -> prgEEX(touchei)
 
+        }
+    }
+
+    private fun prgEEX(touchei: Int) {
+
+        if (touchei == 41) { sgn = true }
+        if (!info2nd) {
+            if (touchei in (0..9)) {
+                previous = touchei * 10
+                info2nd = true
+                return
+            }
+        }
+        if (info2nd) {
+            if (touchei in (0..9)) {
+                previous += touchei
+
+                    codes[index] = if(sgn) {listOf(33, 41 , previous)} else {listOf(33,51, previous)}
+                    fonction = 0
+                    info2nd = false
+                    sgn = false
+                    prevAff()
+                    return
+//                } else {
+//                    message = "error eex"
+//                    flashMessage(1000L)
+//                    info2nd = false
+//                    fonction = 0
+//                    return
+//                }
+            }
         }
     }
 
@@ -102,6 +134,11 @@ class Prgm {
 
             13 -> {//infoGTO = true
                 fonction = 6
+                return
+            }
+            33 -> { // info EEX
+
+                fonction = 8
                 return
             }
 
