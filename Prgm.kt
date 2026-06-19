@@ -2,19 +2,15 @@ package com.example.hp33cfr
 
 import android.os.Handler
 import android.os.Looper
+import com.example.hp33cfr.MainActivity.Global.monProgramme
 
 
+class Prgm
 
-class Prgm {
+ {
     // Initialisation avec une valeur par défaut à l'index 0
-    var codes = mutableListOf<List<Int>>(listOf(99))
-
-    init {
-        codes.clear()
-        for (i in 0..52) {
-            codes.add(listOf(99))
-        }
-    }
+    //  var codes: MutableList<List<Int>> = MutableList(53) { listOf(99) }
+     var codes = monProgramme
 
     private var info2nd = false
     private var sgn =  false
