@@ -43,18 +43,26 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import com.example.hp33cfr.MainActivity.Global.mesRegistres
+import com.example.hp33cfr.MainActivity.Global.monProgramme
 
 
 class MainActivity : ComponentActivity() {
+    lateinit var storage: CalculateurStorage
 
+    //  données sauvées
+    object Global {
+        lateinit var mesRegistres: MutableList<Double>
+        lateinit var monProgramme: MutableList<List<Int>>
+    }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SourceLockedOrientationActivity")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,16 +70,23 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-
             Aff()
-
         }
-
-
+        storage = CalculateurStorage(this)
+        mesRegistres = storage.chargerRegistres()
+        monProgramme = storage.chargerProgramme()
     }
+
+
+    override fun onStop() {
+        super.onStop()
+        // sauvegarde
+        storage.sauvegarderTout(calcul.registres, prog.codes)
+    }
+
 }
 
-
+var infomoi = ""
 var Nenter = 0.12f
 var X = 0f
 var Y = 0f
@@ -93,7 +108,7 @@ fun Aff() {
     val infotext = buildAnnotatedString {
         append("HP33_CFR ")
         withStyle(style = SpanStyle(color = Color.Magenta, fontSize = 16.sp)) {
-            append("V 2.3")
+            append("V 3.0")
         }
     }
 
@@ -130,7 +145,7 @@ fun Aff() {
                                 .padding(horizontal = 12.dp, vertical = 8.dp)
                         )
 
-                        // 2. Le menu déroulant (placé juste après le texte, SANS virgule entre eux)
+                        // 2. Le menu déroulant
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
@@ -172,14 +187,13 @@ fun Aff() {
             )
         },
 
-        content = {
-                innerPadding -> // Utilisation obligatoire du padding
+        content = { innerPadding -> // Utilisation obligatoire du padding
             var imageWidthDp by remember { mutableStateOf(0.dp) }
             var imageHeightDp by remember { mutableStateOf(0.dp) }
             val density = LocalDensity.current
 
 
-          // appliquer "innerPadding" sur le conteneur principal du contenu ici !
+            // appliquer "innerPadding" sur le conteneur principal du contenu ici !
             Box(
                 modifier = Modifier
                     .padding(innerPadding), // Évite que l'image soit cachée par le TopAppBar
@@ -220,6 +234,7 @@ fun Aff() {
                         style = TextStyle(
                             fontFamily = FontFamily.Default,
                             fontSize = 40.sp,
+                            color = Color(0xFFFF0000),
                             shadow = Shadow(color = Color.Red, blurRadius = 8f)
                         )
                     )
@@ -229,7 +244,9 @@ fun Aff() {
                     modifier = Modifier
                         .matchParentSize() // S'adapte à la taille de l'image
 
-                ) {
+                )
+
+                {
                     // bouto RUN/PRGM
                     Box(
                         modifier = Modifier
@@ -242,7 +259,8 @@ fun Aff() {
                                     if (index == 0) {
                                         index = 1
                                     }
-                                    rpm(90) }
+                                    rpm(90)
+                                }
                             )
                     )
                     {
@@ -257,6 +275,36 @@ fun Aff() {
                             )
                         )
                     }
+
+
+                    // Box Info +
+                    Box(
+                        modifier = Modifier
+
+                            .fillMaxWidth(0.9f) // Taille affichage
+                            .fillMaxHeight(0.075f)
+                            .offset(
+                                x = 0.045 * imageWidthDp,
+                                y = .04 * imageHeightDp
+                            ),
+                        //.border(1.dp, color = Color.Red),
+                        contentAlignment = Alignment.Center
+                    )
+                    {
+                        Text(
+                            text = infomoi,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(6.dp),
+
+                            style = TextStyle(
+                                fontSize = 27.sp,
+                                color = Color.White
+                            )
+                        )
+                    }
+
+
 // Mise en place clavier clickable
 
                     // for (touche in keyscode)
@@ -298,6 +346,7 @@ fun ToucheI(posX: Dp, posY: Dp, touchei: Int) {
 }
 
 
+//
 //@Preview(
 //    showBackground = true, showSystemUi = false,
 //    device = "spec:parent=pixel_5,navigation=buttons"
