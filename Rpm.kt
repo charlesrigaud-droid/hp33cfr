@@ -1,9 +1,6 @@
 package com.example.hp33cfr
 
 
-
-// reception des touches cliquées
-
 val calcul = Execut()
 val prog = Prgm()
 val run = RunViewModel()
