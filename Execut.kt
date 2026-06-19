@@ -1,6 +1,9 @@
 package com.example.hp33cfr
 
 
+import android.os.Handler
+import android.os.Looper
+import com.example.hp33cfr.MainActivity.Global.mesRegistres
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.absoluteValue
@@ -41,7 +44,16 @@ class Execut {
     var runOnOff = false
     var rtn = 0
     var stackRtn = mutableListOf<Int>(0, 0, 0, 0)
-    var registres: MutableList<Double> = mutableListOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+   // var registres: MutableList<Double> = mutableListOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+     var registres = mesRegistres
+
+    //  pointent toujours dynamiquement vers le contenu de la memoire pour fonction STATISTIQUES
+    val n: Double get() = registres[2]
+    val sumX: Double get() = registres[3]
+    val sumX2: Double get() = registres[4]
+    val sumY: Double get() = registres[5]
+    val sumY2: Double get() = registres[6]
+    val sumXY: Double get() = registres[7]
 
     var degRadGrad = 1 // 2 -> rad , 1 -> deg , 3 -> grad
     private var previous = 0
@@ -62,7 +74,7 @@ class Execut {
 
         //     gestion ENTER & CLX selon notice
 // --------------------------------------------------------------------------------------
-         if(touchei != 31 && touchei != 34){
+        if (touchei != 31 && touchei != 34) {
             first = false
             modEnterClx = false
         }
@@ -76,7 +88,7 @@ class Execut {
         if ((touchei == 31 || touchei == 34) && !textIn && fonction == 0) {
             first = true
         }
-        
+
         if (touchei == 31) {
             if (textIn) {
 
@@ -98,7 +110,7 @@ class Execut {
             }
         }
         // --------------------------------------------------------------------------------------
- // la saisie devient x sans ENTER
+        // la saisie devient x sans ENTER
         if (textIn) {
             t = z
             z = y
@@ -256,11 +268,26 @@ class Execut {
 
     private fun decodSTO(touchei: Int) {
         if (touchei == 31) {
-            message = "8.8.8.8.8.8.8.8"
-            flashMessage(600L)
-            fonction = 0
+            validDisplay = false
+            modeaff = 2
+            saisie = ""
+            infomoi = "charles.rigaud@gmail.com"
+            display = "8.8.8.8.8.8.8.8.8.8"
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                modeaff = 0
+                fonction = 0
+                infomoi = ""
+                validDisplay = true
+                formatAff()
+
+            }, 6000L) // 10000 millisecondes = 10 secondes
+
             return
         }
+
+
+
 
         if (touchei == 41 || touchei == 51 || touchei == 61 || touchei == 71) {
             fonction = 5
@@ -385,29 +412,81 @@ class Execut {
                 fixSciEng = 2
             }
 
-            21 -> {
-                message = "NEVER"
-                flashMessage()
+            21 -> {// f x̂ (Prend le X actuel comme valeur d'entrée 'y')
+                val denominateurB = (n * sumX2) - (sumX * sumX)
+                val numPenteB = (n * sumXY) - (sumX * sumY)
+
+                if (n > 0 && denominateurB != 0.0 && numPenteB != 0.0) {
+                    val penteB = numPenteB / denominateurB
+                    val intersectA = (sumY - (penteB * sumX)) / n
+
+                    val inputY = x // La valeur entrée par l'utilisateur est dans X
+                    x = (inputY - intersectA) / penteB
+                } else {
+                    fonction = 0
+                    message = "ERROR"
+                    flashMessage()
+                }
+
             }
 
-            22 -> {
-                message = "NEVER"
-                flashMessage()
+            22 -> {// f ŷ (Prend le X actuel pour estimer Y)
+                val denominateurB = (n * sumX2) - (sumX * sumX)
+                if (n > 0 && denominateurB != 0.0) {
+                    val penteB = ((n * sumXY) - (sumX * sumY)) / denominateurB
+                    val intersectA = (sumY - (penteB * sumX)) / n
+                    lastX = x
+                    x = intersectA + (penteB * x) // x est écrasé par l'estimation de y
+                } else {
+                    fonction = 0
+                    message = "ERROR"
+                    flashMessage()
+                }
+
             }
 
-            23 -> {
-                message = "NEVER"
-                flashMessage()
+            23 -> {// f r
+                val num = (n * sumXY) - (sumX * sumY)
+                val den = (n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY)
+                if (den > 0) {
+                    lastX = x
+                    x = num / sqrt(den)
+                } else {
+                    fonction = 0
+                    message = "ERROR"
+                    flashMessage()
+                }
+
             }
 
-            24 -> {
-                message = "NEVER"
-                flashMessage()
+            24 -> {// L.R.
+                val denominateurB = (n * sumX2) - (sumX * sumX)
+                if (n > 0 && denominateurB != 0.0) {
+                    val penteB = ((n * sumXY) - (sumX * sumY)) / denominateurB
+                    val intersectA = (sumY - (penteB * sumX)) / n
+                    y = intersectA
+                    x = penteB
+                } else {
+                    fonction = 0
+                    message = "ERROR"
+                    flashMessage()
+                }
+
             }
 
-            25 -> {
-                message = "NEVER"
-                flashMessage()
+            25 -> {// sigma-
+                // La HP-33 autorise l'opération, mais l'utilisateur doit être conscient
+                // que descendre n en dessous de 0 provoquera des erreurs dans les calculs futurs.
+                lastX = x
+                registres[2]--          // n
+                registres[3] -= x       // sumX
+                registres[4] -= (x * x) // sumX2
+                registres[5] -= y       // sumY
+                registres[6] -= (y * y) // sumY2
+                registres[7] -= (x * y) // sumXY
+                // affiche le nouveau nombre d'éléments (n)
+                x = registres[2]
+
             }
 
             31 -> {
@@ -554,13 +633,36 @@ class Execut {
             }
 
             24 -> {
-                message = "NEVER"
-                flashMessage()
+                lastX = x
+                if (registres[2] != 0.0) {
+                    x = registres[3] / registres[2]
+                    y = registres[5] / registres[2]
+                } else {
+                    fonction = 0
+                    message = "RCL2 = 0"
+                    flashMessage()
+                }
             }
 
-            25 -> {
-                message = "NEVER"
-                flashMessage()
+            25 -> {// g s (Écarts-types de X et Y)
+                if (n > 1) {
+                    val denominateur = n * (n - 1)
+
+                    val numX = (n * sumX2) - (sumX * sumX)
+                    // coerceAtLeast(0.0, ...) évite  le num < 0
+                    val ecartTypeX = sqrt(0.0.coerceAtLeast(numX) / denominateur)
+
+                    val numY = (n * sumY2) - (sumY * sumY)
+                    val ecartTypeY = sqrt(0.0.coerceAtLeast(numY) / denominateur)
+                    lastX = x
+                    y = ecartTypeY
+                    x = ecartTypeX
+                } else {
+                    fonction = 0
+                    message = "ERROR"
+                    flashMessage()
+                }
+
             }
 
             34 -> {
@@ -648,13 +750,14 @@ class Execut {
                 x = x.pow(2)
             }
 
-             1 -> {
+
+            1 -> {
                 if (x in -709.0..709.0) {
                     lastX = x
                     x = exp(x)
                 } else {
                     fonction = 0
-                    message =  "out of bounds"
+                    message = "out of bounds"
                     flashMessage(400)
                 }
 
@@ -666,12 +769,11 @@ class Execut {
                     x = 10.0.pow(x)
                 } else {
                     fonction = 0
-                    message =  "out of bounds"
+                    message = "out of bounds"
                     flashMessage(400)
                 }
 
             }
-           
 
             3 -> { // 1/x
                 if (x != 0.0) {
@@ -789,6 +891,7 @@ class Execut {
                 z = y
                 y = x
                 //  x = x
+
             }
 
             32 -> {  // chs()
@@ -817,8 +920,14 @@ class Execut {
             }
 
             25 -> { // sigma+
-                message = "maybe later"
-                flashMessage()
+                lastX = x
+                registres[2]++               // Nb de n
+                registres[3] += x           // sumX
+                registres[4] += (x * x)       // sumX2
+                registres[5] += y           // sumY
+                registres[6] += (y * y)      // sumY2
+                registres[7] += (x * y)      // sumXY
+                x = registres[2]
             }
 
             51 -> { // add()
