@@ -21,7 +21,10 @@ fun mantisse() {
 
 
 fun affSmart(): String {
-    calcul.x = calcul.x.roundTo15Digits()
+    // expérimental affichage y
+    infomoi = calcul.y.toString()
+
+    calcul.x = calcul.x.roundTo12Digits()
 
     val s = "%${11}e".format(Locale.US, calcul.x) // Formate large
     //  Log.d("exp", "  $s")
@@ -38,10 +41,9 @@ fun affSmart(): String {
 
     var predisplay = ""
     if (fixSciEng == 0) {
-        predisplay = String.format(Locale.US, "%.${fix}f", calcul.x)
-    }
-
-    if (fixSciEng == 1) {
+        predisplay =    String.format(Locale.US, "%.${fix}f", calcul.x)}
+                         //   mantisseCoupee.take(fix) + exposant   }
+if (fixSciEng == 1) {
 
         predisplay = if (grandeur <= 6) {
             calcul.x.toString()
@@ -88,12 +90,12 @@ fun formatEngineer(value: Double): String {
     return "$formattedMantissa E$signStr$formattedExponent"
 }
 
-fun Double.roundTo15Digits(): Double {
+fun Double.roundTo12Digits(): Double {
     // 1. Si le nombre est extrêmement petit (ex: inférieur à 1e-13 en valeur absolue), on retourne 0
     if (abs(this) < 1e-13) {
         return 0.0
     }
-    // 2. Arrondi à 15 chiffres significatifs (gère aussi les nombres négatifs)
-    val mc = MathContext(15, RoundingMode.HALF_UP)
+    // 2. Arrondi à 12 chiffres significatifs (gère aussi les nombres négatifs)
+    val mc = MathContext(12, RoundingMode.HALF_UP)
     return BigDecimal(this).round(mc).toDouble()
 }
