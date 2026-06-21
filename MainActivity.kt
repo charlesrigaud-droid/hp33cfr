@@ -10,7 +10,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -42,6 +44,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -52,7 +55,7 @@ import com.example.hp33cfr.MainActivity.Global.monProgramme
 
 
 class MainActivity : ComponentActivity() {
-    lateinit var storage: CalculateurStorage
+     lateinit var storage: CalculateurStorage
 
     //  données sauvées
     object Global {
@@ -86,7 +89,7 @@ class MainActivity : ComponentActivity() {
 
 }
 
-var infomoi = ""
+var infomoi by mutableStateOf("")
 var Nenter = 0.12f
 var X = 0f
 var Y = 0f
@@ -187,12 +190,10 @@ fun Aff() {
             )
         },
 
-        content = { innerPadding -> // Utilisation obligatoire du padding
+        content = { innerPadding -> // Utilisation de "innerPadding" pour ajuster, la position des éléments internes padding
             var imageWidthDp by remember { mutableStateOf(0.dp) }
             var imageHeightDp by remember { mutableStateOf(0.dp) }
             val density = LocalDensity.current
-
-
             // appliquer "innerPadding" sur le conteneur principal du contenu ici !
             Box(
                 modifier = Modifier
@@ -250,6 +251,7 @@ fun Aff() {
                     // bouto RUN/PRGM
                     Box(
                         modifier = Modifier
+                            .wrapContentSize()
                             .fillMaxWidth(0.17f)
                             .fillMaxHeight(0.045f)
                             .offset(0.599 * imageWidthDp, 0.239 * imageHeightDp)
@@ -267,7 +269,7 @@ fun Aff() {
                         Text(
                             text = infoMode,
                             modifier = Modifier.fillMaxWidth(),
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            textAlign = TextAlign.Center,
                             style = TextStyle(
                                 fontFamily = FontFamily.Default,
                                 fontSize = 20.sp,
@@ -277,35 +279,43 @@ fun Aff() {
                     }
 
 
-                    // Box Info +
-                    Box(
-                        modifier = Modifier
+                    // Box Info + affichage y
+                    BoxWithConstraints(                            // WithConstraints
 
+                        modifier = Modifier
                             .fillMaxWidth(0.9f) // Taille affichage
                             .fillMaxHeight(0.075f)
                             .offset(
                                 x = 0.045 * imageWidthDp,
                                 y = .04 * imageHeightDp
-                            ),
-                        //.border(1.dp, color = Color.Red),
-                        contentAlignment = Alignment.Center
+                            )
+
                     )
                     {
+
+                        val maxHeightPx = with(LocalDensity.current) { maxHeight.toPx() }
+                        val paddingPx =
+                            with(LocalDensity.current) { 12.dp.toPx() } // 6.dp de chaque côté (haut/bas)
+                        // 2. On calcule la taille de la police en SP basée sur la hauteur restante
+                        val calculatedFontSize = with(LocalDensity.current) {
+                            ((maxHeightPx - paddingPx) * 0.6f).toSp()   //  coefficient  pour éviter que le texte ne colle trop aux bords
+                        }
+
                         Text(
                             text = infomoi,
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillMaxSize()
                                 .padding(6.dp),
-
+                            textAlign = TextAlign.End, // Aligne le texte à droite
                             style = TextStyle(
-                                fontSize = 27.sp,
+                                fontSize = calculatedFontSize,
                                 color = Color.White
                             )
                         )
                     }
 
 
-// Mise en place clavier clickable
+// Mise en place clavier Cliquable
 
                     // for (touche in keyscode)
                     keyscode.forEach { touche ->
