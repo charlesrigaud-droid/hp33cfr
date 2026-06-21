@@ -47,7 +47,7 @@ class Execut {
    // var registres: MutableList<Double> = mutableListOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
      var registres = mesRegistres
 
-    //  pointent toujours dynamiquement vers le contenu de la memoire pour fonction STATISTIQUES
+    //  pointent toujours dynamiquement vers le contenu des mémoires pour fonctions STATISTIQUES
     val n: Double get() = registres[2]
     val sumX: Double get() = registres[3]
     val sumX2: Double get() = registres[4]
@@ -129,6 +129,10 @@ class Execut {
             return
         }
 
+
+
+
+
 // ACTION DES TOUCHES
 
 // changement pour touches de fonction
@@ -155,7 +159,7 @@ class Execut {
             }
 
             5 -> { // STO + STO - STO * STO /
-                decodSTOWitch(touchei)
+                decodSTOWith(touchei)
             }
 
             6 -> { // GO TO
@@ -228,7 +232,7 @@ class Execut {
     }
 
 
-    fun decodSTOWitch(touchei: Int) {
+    fun decodSTOWith(touchei: Int) {
         if (touchei in 0..7) {
             when (touchee) {
 
