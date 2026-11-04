@@ -46,6 +46,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -248,7 +249,7 @@ fun Aff() {
                 )
 
                 {
-                    // bouto RUN/PRGM
+                    // bouton RUN/PRGM
                     Box(
                         modifier = Modifier
                             .wrapContentSize()
@@ -356,15 +357,23 @@ fun ToucheI(posX: Dp, posY: Dp, touchei: Int) {
 }
 
 
-//
-//@Preview(
-//    showBackground = true, showSystemUi = false,
-//    device = "spec:parent=pixel_5,navigation=buttons"
-//)
-//@Composable
-//fun AffPreview() {
-//
-//    Aff()
-//
-//}
+
+@Preview(
+    showBackground = true, showSystemUi = false,
+    device = "spec:parent=pixel_5,navigation=buttons"
+)
+@Composable
+fun AffPreview() {
+    try {
+        MainActivity.Global.mesRegistres
+    } catch (_: Throwable) {
+        MainActivity.Global.mesRegistres = MutableList(8) { 0.0 }
+    }
+    try {
+        MainActivity.Global.monProgramme
+    } catch (_: Throwable) {
+        MainActivity.Global.monProgramme = mutableListOf()
+    }
+    Aff()
+}
 
