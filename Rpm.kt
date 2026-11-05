@@ -64,7 +64,8 @@ fun formatAff() {
             }
 
             1 -> {
-                infomoi = calcul.x.toString() // affichage x pour expérimental affichage y pendant la saisie
+                 infomoi = if (valid_infomoi) { calcul.x.toString() }
+                else  "" // affichage x pour expérimental affichage y pendant la saisie
                 saisie
             }
 
