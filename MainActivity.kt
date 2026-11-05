@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -91,6 +92,7 @@ class MainActivity : ComponentActivity() {
 }
 
 var infomoi by mutableStateOf("")
+var valid_infomoi = false
 var Nenter = 0.12f
 var X = 0f
 var Y = 0f
@@ -112,7 +114,7 @@ fun Aff() {
     val infotext = buildAnnotatedString {
         append("HP33_CFR ")
         withStyle(style = SpanStyle(color = Color.Magenta, fontSize = 16.sp)) {
-            append("V 3.0")
+            append("V 3.1")
         }
     }
 
@@ -314,6 +316,35 @@ fun Aff() {
                             )
                         )
                     }
+
+
+                    // Box valid super affichage y
+                     Box(
+                                            modifier = Modifier
+                                                .wrapContentSize()
+                                                .fillMaxWidth(0.1f)
+                                                .fillMaxHeight(0.045f)
+                                                .offset(0.9 * imageWidthDp, 0.239 * imageHeightDp)
+                                                .border(1.dp, color = Color.Yellow)
+                                                .clickable(
+                                                    onClick = {
+                                                         valid_infomoi = !valid_infomoi
+                                                        affSmart()
+                                                    }
+                                                )
+                                        )
+                                        {
+                                            Image(
+                                                painter = painterResource(id = R.drawable.bulb),
+                                                contentDescription = "Ampoule",
+                                                modifier = Modifier.fillMaxWidth() // S'adapte à la taille du Box
+                                                )
+
+                                        }
+
+                    // w // w
+
+
 
 
 // Mise en place clavier Cliquable
