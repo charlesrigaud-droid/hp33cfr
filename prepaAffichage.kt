@@ -22,7 +22,8 @@ fun mantisse() {
 
 fun affSmart(): String {
     // expérimental affichage y
-    infomoi = calcul.y.toString()
+    infomoi = if(valid_infomoi) calcul.y.toString()
+    else ""
 
     calcul.x = calcul.x.roundTo12Digits()
 
