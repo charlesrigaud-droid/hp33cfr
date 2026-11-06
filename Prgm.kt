@@ -154,8 +154,8 @@ class Prgm
 
     // GOTO
     private fun prgGTO(touchei: Int) {
-        val codegto = 13
-        vargto(touchei, codegto)
+      //  val codegto = 13
+        vargto(touchei, 13)
         return
     }
 
@@ -164,8 +164,8 @@ class Prgm
     private fun prgGSB(touchei: Int) {
         val nbGOSUB = calculGSB()
         if (nbGOSUB < 3) {
-            val codegto = 12
-            vargto(touchei, codegto)
+          //  val codegto = 12
+            vargto(touchei, 12)
             return
         } else {
             message = "max 3 GOSUB"
